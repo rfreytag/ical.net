@@ -73,9 +73,11 @@ namespace Ical.Net.Serialization
             var context = new SerializationContext();
             var stack = new Stack<ICalendarComponent>();
             var current = default(ICalendarComponent);
+            var lineno = 0;
             foreach (var contentLineString in GetContentLines(reader))
             {
-                var contentLine = ParseContentLine(context, contentLineString);
+                lineno++;
+                var contentLine = ParseContentLine(context, contentLineString, lineno);
                 if (string.Equals(contentLine.Name, "BEGIN", StringComparison.OrdinalIgnoreCase))
                 {
                     stack.Push(current);
@@ -118,12 +120,12 @@ namespace Ical.Net.Serialization
             }
         }
 
-        private CalendarProperty ParseContentLine(SerializationContext context, string input)
+        private CalendarProperty ParseContentLine(SerializationContext context, string input, int lineno)
         {
             var match = _contentLineRegex.Match(input);
             if (!match.Success)
             {
-                throw new SerializationException($"Could not parse line: '{input}'");
+                throw new SerializationException($"Could not parse line: '{input}' at line: {lineno}");
             }
             var name = match.Groups[_nameGroup].Value;
             var value = match.Groups[_valueGroup].Value;
