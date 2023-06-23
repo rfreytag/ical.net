@@ -119,7 +119,8 @@ namespace Ical.Net.CalendarComponents
         /// </summary>
         public virtual bool IsAllDay
         {
-            get => !Start.HasTime;
+            // get => !Start.HasTime;
+            get => !(Start.HasTime || End.HasTime);
             set
             {
                 // Set whether or not the start date/time
