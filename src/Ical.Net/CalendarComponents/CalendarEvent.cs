@@ -120,7 +120,22 @@ namespace Ical.Net.CalendarComponents
         public virtual bool IsAllDay
         {
             // get => !Start.HasTime;
-            get => !(Start.HasTime || End.HasTime);
+            //get => !(Start.HasTime || End.HasTime);
+            get
+            {
+                if (Start == null && End == null)
+                {
+                    return false; // or handle null case as per your application logic
+                }
+                else if (End == null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return !(Start.HasTime || End.HasTime);
+                }
+            }
             set
             {
                 // Set whether or not the start date/time
