@@ -63,10 +63,13 @@ namespace Ical.Net.Evaluation
             var r = new RecurrencePattern();
             r.CopyFrom(Pattern);
 
-            // Convert the UNTIL value to one that matches the same time information as the reference date
+            // Convert the UNTIL value to one that matches the same time information as the reference date.
+            // Don't force referenceDate.TzId on the CalDateTime — let the original DateTimeKind be
+            // preserved (e.g. UTC from "UNTIL=20250206T050001Z") so MatchTimeZone properly converts
+            // it to the reference timezone instead of just re-stamping the raw value.
             if (r.Until != DateTime.MinValue)
             {
-                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until, referenceDate.TzId)).Value;
+                r.Until = DateUtil.MatchTimeZone(referenceDate, new CalDateTime(r.Until)).Value;
             }
 
             if (r.Frequency > FrequencyType.Secondly && r.BySecond.Count == 0 && referenceDate.HasTime
